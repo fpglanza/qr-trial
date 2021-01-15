@@ -1,8 +1,16 @@
 class User < ApplicationRecord
+  attr_reader :username, :points, :email
   has_one :points
-  after_initialize :init
 
-  def init
-    self.number ||= 0
+  def username
+    @username
+  end
+
+  def points
+    @points
+  end
+
+  def email
+    @email
   end
 end

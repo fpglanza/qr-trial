@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  before_action :set_user, only: [:show]
 
   def new
     @user = User.new
@@ -6,17 +7,26 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    @user.username = current_user.username
   end
 
-
   def create
-    @user = User.new(params[:user])
+    @user = User.new(user_params)
     @user.save
+    session[:user_id] = @user.id
 
     redirect_to user_path(@user)
   end
 
-  def addpoints
+  def current_user
+    User.find_by(id: session[:user_id])
+  end
+
+  def logged_in?
+    !current_user.nil?
+  end
+
+  def add_points
     @user = User.find(params[:id])
     @user.points += 69
   end
@@ -30,7 +40,11 @@ class UsersController < ApplicationController
 
   private
 
+  def set_user
+    @user = User.find(params[:id])
+  end
+
   def user_params
-    params.require(:user).permit(:name, :email, :points)
+    params.require(:user).permit(:username, :email, :points)
   end
 end
